@@ -49,7 +49,7 @@ class Router
     function routers(&$router)
     {
         //Routes:
-        $router->respond('get',  '/',    'Site\Page::index');
+        $router->respond('get',  '/',    'Site\Front::page');
     }
 }
 
