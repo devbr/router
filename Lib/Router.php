@@ -178,6 +178,11 @@ class Router
     function run($log = false)
     {
         $res = $this->resolve();
+        
+        //If is a CALLBACK...
+        if (is_object($res['controller'])) {
+            exit(call_user_func_array($res['controller'], $res['params']));
+        }
 
         $ctrl = isset($res['controller']) && $res['controller'] !== null ? $res['controller'] : $this->defaultController;
         $action = isset($res['action']) && $res['action'] !== null ? $res['action'] : $this->defaultAction;
@@ -247,7 +252,7 @@ class Router
         $method = strtoupper(trim($method));
 
         //Para sintaxe: CONTROLLER::ACTION
-        if(strpos($controller, $this->separator) !== false){
+        if(!is_object($controller) && strpos($controller, $this->separator) !== false){
             $a = explode($this->separator, $controller);
             $controller = isset($a[0]) ? $a[0] : null;
             $action = isset($a[1]) ? $a[1] : null;
