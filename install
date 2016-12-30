@@ -68,6 +68,7 @@ class Router
                           The Controller can also be an anonymous function that receives (or not) 
                           parameters of the regular expression in <request>. 
                           Ex.: $router->respond('get', '/(*)', function($path){exit($path);});
+                           -- if request "http://site.com/test/me", print in screen "test/me".
             
             <action>:     Optional form to indicate an action. Ex.: "login"
     
