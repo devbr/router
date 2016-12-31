@@ -24,7 +24,6 @@ namespace Lib;
  */
 class Router 
 {
-
     private $url = '';
     private $http = '';
     private $base = '';
