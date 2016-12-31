@@ -14,6 +14,8 @@ More info: https://packagist.org/packages/devbr/router
 
 ## Access Management
 
+```TODO: translate to english``` 
+
 Depois de instalado o arquivo de configuração (Config\Router), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
 
 ```php
@@ -32,6 +34,8 @@ Este é o arquivo básico que acompanha a instalação do Router, podendo ser en
 A função "respond", responsável por adicionar as rotas de resposta conforme a solicitação de acesso, tem a seguinte sintaxe:
 
 ```shell
+TODO: review examples and didactics
+
 $router->respond( <type>, <request>, <controller>, [<action>]);
         
     <type>:       A string with the following methods: "all", "get", "post", "delete", "put", "patch".
@@ -60,6 +64,8 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
 ```
 
 ## Namespace
+
+```TODO: translate to english```
 
 O NAMESPACE tem seu "root" na pasta do PHP em seu site ou aplicação ("/.php").
 
