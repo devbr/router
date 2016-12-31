@@ -61,11 +61,13 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
 
 ## Namespace
 
-O NAMESPACE tem seu "root" na pasta do PHP em seu site/app (".php").
-Por exemplo, em um servidor Linux com Apache:
+O NAMESPACE tem seu "root" na pasta do PHP em seu site ou aplicação ("/.php").
 
+Em um servidor Linux, rodando Apache, o root deve estar no seguinte caminho:
 ```php
 /var/www/site/.php/
+
+--- pode variar conforme a configuração do servidor.
 ```
 A partir dessa pasta você pode chamar qualquer recurso (classe), usando o caminho relativo, o patch (caminho) do arquivo da classe.
 
@@ -88,7 +90,7 @@ Ou você pode usar a declaração "use", para ficar mais elegante:
 use Site\Front\Page;
  ....
 
-//Dentro de uma classe/função...
+//Dentro de um método da classe...
 $page = new Page;
 ```
 
