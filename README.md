@@ -1,6 +1,6 @@
-# Router
+# Access Manager - Router
 
-# Install
+## Install
 
 Use Composer for easy installation:
 
@@ -12,7 +12,7 @@ Or install the full base for PHP websites, at "https://github.com/devb/website".
 
 More info: https://packagist.org/packages/devbr/router
 
-## Access Manager
+## Access Management
 
 Depois de instalado o arquivo de configuração (Config\Router), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
 
