@@ -8,7 +8,7 @@ Use Composer for easy installation:
 Composer require devbr/router 
 ```
 
-Or install the full base for PHP websites, at "https://github.com/devb/website".
+Or install the full base for PHP websites, at "https://github.com/devbr/website".
 
 More info: https://packagist.org/packages/devbr/router
 
