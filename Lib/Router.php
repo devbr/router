@@ -22,7 +22,7 @@ namespace Lib;
  * @license  <https://opensource.org/licenses/MIT> MIT
  * @link     http://paulorocha.tk/github/devbr
  */
-class Router 
+class Router
 {
     private $url = '';
     private $http = '';
@@ -33,73 +33,61 @@ class Router
     private $all = [];
     private $method = 'GET';
     private $separator = '::';
-
     private $controller = '';
     private $action = '';
     private $defaultController = 'Resource\Main';
     private $defaultAction = 'pageNotFound';
     
     //namespace prefix for MVC systems - ex.: '\Controller'
-    private $namespacePrefix = ''; 
-
+    private $namespacePrefix = '';
     static $node = null;
     
     //GETs -----------------------------------------------------------------
-    function getUrl() 
+    function getUrl()
     {
         return $this->url;
     }
-
-    function getHttp() 
+    function getHttp()
     {
         return $this->http;
     }
-
-    function getBase() 
+    function getBase()
     {
         return $this->base;
     }
-
-    function getRequest() 
+    function getRequest()
     {
         return $this->request;
     }
-
-    function getRouters() 
+    function getRouters()
     {
         return $this->routers;
     }
-
-    function getAll() 
+    function getAll()
     {
         return $this->all;
     }
-
-    function getMethod() 
+    function getMethod()
     {
         return $this->method;
     }
     
-    function getController() 
+    function getController()
     {
         return $this->controller;
     }
-
-    function getAction() 
+    function getAction()
     {
         return $this->action;
     }
-
-    function getSeparator() 
+    function getSeparator()
     {
         return $this->separator;
     }
-
     function getParams()
     {
         return count($this->params) > 0 ? $this->params : null;
     }
-
     //SETs -----------------------------------------------------------------
     function setSeparator($v)
     {
@@ -126,43 +114,44 @@ class Router
     }
     
     /**
-     * Constructor  
+     * Constructor
      */
-    function __construct( 
-        $request = null, 
-        $url = null)
-    {
-        if ($request !== null)
+    function __construct(
+        $request = null,
+        $url = null
+    ) {
+    
+        if ($request !== null) {
             define('_RQST', $request);
-
-        if ($url !== null)
-            define('_URL', $url);        
-
+        }
+        if ($url !== null) {
+            define('_URL', $url);
+        }
         //Load configurations
-        if(method_exists('Config\Router', 'routers'))
+        if (method_exists('Config\Router', 'routers')) {
             (new \Config\Router)->routers($this);
-
+        }
         $this->method = $this->requestMethod();
         $this->mount();
     }
-
     /**
      * Singleton instance
      *
      */
     static function this()
     {
-        if(is_object(static::$node)) return static::$node;
+        if (is_object(static::$node)) {
+            return static::$node;
+        }
         //else...
         list($routers, $request, $url) = array_merge(func_get_args(), [null, null, null]);
         return static::$node = new static($routers, $request, $url);
     }
-
     /**
      * Make happen...
      *
      */
-    function run($log = false)
+    function run()
     {
         $res = $this->resolve();
         
@@ -170,160 +159,136 @@ class Router
         if (is_object($res['controller'])) {
             exit(call_user_func_array($res['controller'], $res['params']));
         }
-
         $ctrl = isset($res['controller']) && $res['controller'] !== null ? $res['controller'] : $this->defaultController;
         $action = isset($res['action']) && $res['action'] !== null ? $res['action'] : $this->defaultAction;
 
         //Name format to Controller namespace
         $tmp = explode('\\', str_replace('/', '\\', $ctrl));
         $ctrl = $this->namespacePrefix;
-        foreach($tmp as $tmp1){
+        foreach ($tmp as $tmp1) {
             $ctrl .= '\\'.ucfirst($tmp1);
         }
-
         //save controller param
         $this->controller = $ctrl;
         $this->action = $action;
-
         //instantiate the controller
         $controller = new $ctrl(['params' => $res['params'], 'request' => $this->request]);
-
+        
         $this->params = $res['params'];
 
-        if (method_exists($controller, $action)){
-            if(is_callable($log)) $log($this, __CLASS__); //call debuglog
-            return $controller->$action();
-        } else {
-            $this->action = $this->defaultAction; //set Action
-            if(is_callable($log)) $log($this, __CLASS__); //call debuglog
-            return $controller->{$this->defaultAction}();
+        if (!method_exists($controller, $this->action)) {
+            $this->action = $this->defaultAction;
         }
+        
+        return call_user_func_array([$controller, $this->action],
+                                    [$this->request, $this->params]);
     }
 
     /**
      * Resolve routers
-     * 
+     *
      */
-    function resolve() 
+    function resolve()
     {
         //first: serach in ALL
         $route = $this->searchRouter($this->all);
-
         //now: search for access method
-        if ($route === false && isset($this->routers[$this->method]))
+        if ($route === false && isset($this->routers[$this->method])) {
             $route = $this->searchRouter($this->routers[$this->method]);
-
+        }
         //not match...
-        if ($route === false)
+        if ($route === false) {
             $route['controller'] = $route['action'] = $route['params'] = $route['request'] = null;
-
+        }
         //set params
         $this->controller = $route['controller'];
         $this->action = $route['action'];
         $this->params = $route['params'];
-
         //out with decoded router OR all null
         return $route;
     }
-
     /**
      * Insert/config routers
      *
      */
     function respond(
-        $method = 'all', 
-        $request = '', 
-        $controller = null, 
-        $action = null) 
-    {
+        $method = 'all',
+        $request = '',
+        $controller = null,
+        $action = null
+    ) {
+    
         $method = strtoupper(trim($method));
-
         //Para sintaxe: CONTROLLER::ACTION
-        if(!is_object($controller) && strpos($controller, $this->separator) !== false){
+        if (!is_object($controller) && strpos($controller, $this->separator) !== false) {
             $a = explode($this->separator, $controller);
             $controller = isset($a[0]) ? $a[0] : null;
             $action = isset($a[1]) ? $a[1] : null;
         }
-
-        if ($method == 'ALL')
+        if ($method == 'ALL') {
             $this->all[] = ['request' => trim($request, '/'), 'controller' => $controller, 'action' => $action];
-        else {
+        } else {
             foreach (explode('|', $method) as $mtd) {
                 $this->routers[$mtd][] = ['request' => trim($request, '/'), 'controller' => $controller, 'action' => $action];
             }
         }
-        return $this;
+            return $this;
     }
-
     /**
-     * Mount 
+     * Mount
      */
-    private function mount() 
+    private function mount()
     {
         //Detect SSL access
-        if (!isset($_SERVER['SERVER_PORT']))
+        if (!isset($_SERVER['SERVER_PORT'])) {
             $_SERVER['SERVER_PORT'] = 80;
+        }
         $http = (isset($_SERVER['HTTPS']) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1 || $_SERVER['SERVER_PORT'] == 443)) ? 'https://' : 'http://';
-
         //What's base??!
         $base = isset($_SERVER['PHAR_SCRIPT_NAME']) ? dirname($_SERVER['PHAR_SCRIPT_NAME']) : rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), ' /');
-
-        if ($_SERVER['SERVER_PORT'] != 80  && $_SERVER['SERVER_PORT'] != 443)
+        if ($_SERVER['SERVER_PORT'] != 80  && $_SERVER['SERVER_PORT'] != 443) {
             $base .= ':' . $_SERVER['SERVER_PORT'];
-
+        }
         //URL & REQST Constants:
         defined('_RQST') || define('_RQST', urldecode(isset($_SERVER['REQUEST_URI']) ? urldecode(trim(str_replace($base, '', trim($_SERVER['REQUEST_URI'])), ' /')) : ''));
         defined('_URL') || define('_URL', isset($_SERVER['SERVER_NAME']) ? $http . $_SERVER['SERVER_NAME'] . $base . '/' : '');
-
         $this->request = _RQST;
         $this->url = _URL;
         $this->base = $base;
         $this->http = $http;
     }
-
     /**
      * Search for valide router
      *
      * @params
      */
-    private function searchRouter($routes) 
+    private function searchRouter($routes)
     {
         foreach ($routes as $route) {
-            if($route['controller'] === null) continue;
-
-            if (!preg_match_all('#^' . $route['request'] . '$#', $this->request, $matches, PREG_OFFSET_CAPTURE))
+            if ($route['controller'] === null
+                  || !preg_match_all('#^' . $route['request'] . '$#',
+                        $this->request,
+                        $matches,
+                        PREG_SET_ORDER)
+                  ) {
                 continue;
-            // retrabalhando matches
-            $matches = array_slice($matches, 1);
-
-            // parametros
-            $params = array_map(function ($match, $index) use ($matches) {
-
-                if (isset($matches[$index + 1]) && isset($matches[$index + 1][0]) && is_array($matches[$index + 1][0])) {
-                    return trim(substr($match[0][0], 0, $matches[$index + 1][0][1] - $match[0][1]), '/');
-                } else {
-                    return (isset($match[0][0]) ? trim($match[0][0], '/') : null);
-                }
-            }, $matches, array_keys($matches));
-
-            $route['params'] = $params;
+            }            
+            $route['params'] = array_slice($matches[0], 1);
             return $route;
         }
         //não existe rotas
         return false;
     }
-
     /**
      * Get all request headers
      * @return array The request headers
      */
-    private function requestHeaders() 
+    private function requestHeaders()
     {
         // getallheaders available, use that
         if (function_exists('getallheaders')) {
             return getallheaders();
         }
-
         // getallheaders not available: manually extract 'm
         $headers = array();
         foreach ($_SERVER as $name => $value) {
@@ -333,16 +298,14 @@ class Router
         }
         return $headers;
     }
-
     /**
      * Get the request method used, taking overrides into account
      * @return string The Request method to handle
      */
-    private function requestMethod() 
+    private function requestMethod()
     {
         // Take the method as found in $_SERVER
         $method = $_SERVER['REQUEST_METHOD'];
-
         if ($_SERVER['REQUEST_METHOD'] == 'HEAD') {
             ob_start();
             $method = 'GET';
