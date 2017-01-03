@@ -121,7 +121,6 @@ class Router
         $request = null,
         $url = null
     ) {
-    
         if ($request !== null) {
             define('_RQST', $request);
         }
@@ -191,7 +190,7 @@ class Router
         if (!method_exists(static::$ctrl, $this->action)) {
             $this->action = $this->defaultAction;
         }
-        
+
         return call_user_func_array([static::$ctrl, $this->action],
                                     [$this->request, $this->params]);
     }

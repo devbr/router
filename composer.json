@@ -1,7 +1,7 @@
 {
     "name": "devbr/router",
-    "description": "Request router for website",
-    "keywords": ["request", "router","website"],
+    "description": "Access Controller for your website (Router)",
+    "keywords": ["request","access controller","router","website"],
     "license": "MIT",
     "type": "library",
     "homepage": "http://paulorocha.tk/devbr/",
@@ -18,9 +18,7 @@
     "require": {
         "php": ">=7.0.0"
     },
-    "require-dev": {
-    },
     "autoload": {
-        "psr-0": {"Lib": "/"}
+        "psr-4": {"Lib\\": ""}
     }
 }

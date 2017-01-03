@@ -29,7 +29,7 @@ class Router
     }
 }
 ```
-Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em ".php/Config/Router". É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
+Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em ".php/Config/Router" (ou na pasta vendor/devbr/router/config.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
 
 A função "respond", responsável por adicionar as rotas de resposta conforme a solicitação de acesso, tem a seguinte sintaxe:
 
@@ -53,13 +53,13 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
                   parameters of the regular expression in <request>.
                         Ex.: $router->respond('get', 
                                               '/(*)/(*)/(*)', 
-                                              function($one, $two, $three){ 
-                                                  exit( $one.' '.$two.' '.$three);
+                                              function($rqst, $params){ 
+                                                  exit( '<pre>'.print_r($params, true));
                                               }
                                              );
                     -- If you request "http://site.com/test/me/now", print on the screen "test me now".
             
-    <action>:     Optional form to indicate an action. 
+    <action>:     Optional to indicate an action. 
                         Ex.: "login".
 ```
 
@@ -68,6 +68,14 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
 ```TODO: translate to english```
 
 O NAMESPACE tem seu "root" na pasta do PHP em seu site ou aplicação ("/.php").
+
+Se você instalou o "https://github.com/devbr/website" já terá esta configuração, caso não, acrescente isto em seu composer.json:
+
+```shell
+"autoload": {
+        "psr-4": {"": ".php/"}
+    }
+```
 
 Em um servidor Linux, rodando Apache, o root deve estar no seguinte caminho:
 ```php

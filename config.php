@@ -1,13 +1,4 @@
 <?php
-if (php_sapi_name() !== 'cli') exit('It\'s no cli!');
-
-$config = dirname(dirname(dirname(__DIR__))).'/Config/Router.php';
-
-if(is_file($config)) return "\n--- Router configuration file already exists!";
-if(!is_dir(dirname($config))) return "\n\n--- Configuration file for Router not instaled!\n\n";
-
-$data = <<<'EOD'
-<?php
 /**
  * Config\Router
  * PHP version 7
@@ -102,8 +93,3 @@ class Router
             
             <action>:     Optional form to indicate an action. Ex.: "login"
 */
-EOD;
-
-file_put_contents($config, $data);
-
-return "\n--- Router instaled!";
