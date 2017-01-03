@@ -40,7 +40,8 @@ class Router
     
     //namespace prefix for MVC systems - ex.: '\Controller'
     private $namespacePrefix = '';
-    static $node = null;
+    private static $node = null;
+    private static $ctrl = null;
     
     //GETs -----------------------------------------------------------------
     function getUrl()
@@ -147,40 +148,51 @@ class Router
         list($routers, $request, $url) = array_merge(func_get_args(), [null, null, null]);
         return static::$node = new static($routers, $request, $url);
     }
+    
+    /**
+     *  Get Controller Object
+     */
+    static function getCtrl()
+    {
+        return static::$ctrl;
+    }
+    
     /**
      * Make happen...
      *
      */
     function run()
     {
-        $res = $this->resolve();
+        $this->resolve();
         
         //If is a CALLBACK...
-        if (is_object($res['controller'])) {
-            exit(call_user_func_array($res['controller'], $res['params']));
+        if (is_object($this->controller)) {
+            exit(call_user_func_array($this->controller, [$this->request, $this->params]));
         }
-        $ctrl = isset($res['controller']) && $res['controller'] !== null ? $res['controller'] : $this->defaultController;
-        $action = isset($res['action']) && $res['action'] !== null ? $res['action'] : $this->defaultAction;
+        if ($this->controller === null) {
+            $this->controller = $this->defaultController;
+        }
+        if ($this->action === null) {
+            $this->action = $this->defaultAction;
+        }
 
         //Name format to Controller namespace
-        $tmp = explode('\\', str_replace('/', '\\', $ctrl));
+        $tmp = explode('\\', str_replace('/', '\\', $this->controller));
         $ctrl = $this->namespacePrefix;
         foreach ($tmp as $tmp1) {
             $ctrl .= '\\'.ucfirst($tmp1);
         }
         //save controller param
         $this->controller = $ctrl;
-        $this->action = $action;
-        //instantiate the controller
-        $controller = new $ctrl(['params' => $res['params'], 'request' => $this->request]);
         
-        $this->params = $res['params'];
+        //instantiate the controller
+        static::$ctrl = new $ctrl(['params' => $this->params, 'request' => $this->request]);
 
-        if (!method_exists($controller, $this->action)) {
+        if (!method_exists(static::$ctrl, $this->action)) {
             $this->action = $this->defaultAction;
         }
         
-        return call_user_func_array([$controller, $this->action],
+        return call_user_func_array([static::$ctrl, $this->action],
                                     [$this->request, $this->params]);
     }
 
@@ -272,7 +284,7 @@ class Router
                         PREG_SET_ORDER)
                   ) {
                 continue;
-            }            
+            }
             $route['params'] = array_slice($matches[0], 1);
             return $route;
         }
