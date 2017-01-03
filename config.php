@@ -27,33 +27,33 @@ class Router
 {
     function routers(&$router)
     {
-        $router->respond('get', '/', 'Site\Front::page')
-               /*
-                  Considere a url:
-                    http://localhost/loja/903/Camisa Polo Marca XXX/ldfnld-n0p/+=dlknferçlkm/dsfdfdsjd//
+        $router->respond('get', '/', 'Resource\Main::index')
+        /*
+            Considere a url:
+            http://localhost/loja/903/Camisa Polo Marca XXX/ldfnld-n0p/+=dlknferçlkm/dsfdfdsjd//
 
-                    Captura:
-                        ['id'] => 903
-                        ['produto'] => Camisa Polo MArca XXX
+            Captura:
+            ['id'] => 903
+            ['produto'] => Camisa Polo MArca XXX
 
-                    Ignora tudo mais...
+            Ignora tudo mais...
 
-                    Veja a função "teste" da classe em "/.php/Site/Front.php"
-                    Segue a configuração da rota, abaixo:
-                */
-               ->respond('get', '/loja/(?<id>.*?)/(?<produto>[^/]*).*', 'Site\Front::test')
+            Veja a função "teste" da classe em "/.php/Site/Front.php"
+            Segue a configuração da rota, abaixo:
+        */
+               ->respond('get', '/loja/(?<id>.*?)/(?<produto>[^/]*).*', 'Resource\Main::indexTest')
                
-                /*
-                    A mesma configuração, porém com parametros (índice) NUMÉRICOS:
-                    http://localhost/loja2/903/Camisa Polo Marca XXX/ldfnld-n0p/+=dlknferçlkm/dsfdfdsjd//
-                */
+        /*
+            A mesma configuração, porém com parametros (índice) NUMÉRICOS:
+            http://localhost/loja2/903/Camisa Polo Marca XXX/ldfnld-n0p/+=dlknferçlkm/dsfdfdsjd//
+        */
                 
-               ->respond('get', '/loja2/(.*?)/([^/]*).*', 'Site\Front::test')
+               ->respond('get', '/loja2/(.*?)/([^/]*).*', 'Resource\Main::indexTest')
 
-               /*
-                    Usando uma função anônima diretamente na configuração do Router
-                    http://localhost/fac/categoria/pergunta
-                */
+        /*
+            Usando uma função anônima diretamente na configuração do Router
+            http://localhost/fac/categoria/pergunta
+        */
                ->respond('get', '/fac/(.*?)/([^/]*).*',
 
                             function ($type, $user) {
@@ -62,10 +62,10 @@ class Router
                                       <b>Parametros:</b><pre>'.print_r($user, true).'</pre></p>';
                             })
 
-               /*
-                    Usando uma função anônima para mostrar uma página HTML ESTÁTICA
-                    http://localhost/about                    
-                */
+        /*
+            Usando uma função anônima para mostrar uma página HTML ESTÁTICA
+            http://localhost/about                    
+        */
                ->respond('get', '/about',
 
                             function () {
