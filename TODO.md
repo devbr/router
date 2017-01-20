@@ -4,6 +4,9 @@ Sugestões de futuras implementações, modificações etc.
 ## Sugestões para a edição "Orange Summer III"
 Publicação prevista para <b>31/01/2017 às 12:00hm</b> - código da versão: ```20170131120000```.
 
+As sugestões de código devem ser enviadas até o dia 27/01 para que tenhamos tempo de testar e votar na melhor solução.
+Use "Pull request" ou email "prbr@ymail.com" para envios de código.
+
 ----
 
 ### 1 - Inserir função no ```Config/Router``` para configurar a resposta em situação de <b>erro</b>.
