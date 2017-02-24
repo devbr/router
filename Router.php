@@ -185,7 +185,12 @@ class Router
         $this->controller = $ctrl;
         
         //instantiate the controller
-        static::$ctrl = new $ctrl(['params' => $this->params, 'request' => $this->request]);
+        if (class_exists($ctrl)) {
+            static::$ctrl = new $ctrl(['params' => $this->params, 'request' => $this->request]);
+        } else {
+            header("HTTP/1.0 404 Not Found");
+            exit('Page not Found!');
+        }
 
         if (!method_exists(static::$ctrl, $this->action)) {
             $this->action = $this->defaultAction;
