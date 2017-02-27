@@ -6,19 +6,22 @@ if (php_sapi_name() !== 'cli') {
 //Configurations - you can change...
 $name = 'Router';
 $file = 'Router.php';
-$configPath = defined('_CONFIG') ? _CONFIG : dirname(dirname(dirname(__DIR__))).'/Config/';
+$configPath = defined('_CONFIG') ? _CONFIG.'Router/' : dirname(dirname(dirname(__DIR__))).'/Config/Router/';
 
 //Checkin
 if (is_file($configPath.$file)) {
     return "\n--- $name configuration file already exists!";
 }
 if (!is_dir($configPath)) {
-    return "\n\n--- Configuration file for $name not instaled!\n\n";
+    @mkdir($configPath, '0777', true);
+    @chmod($configPath, $perm);
+    if (!is_writable($configPath)) {
+        return "\n\n--- Configuration file for $name not instaled!\n\n";
+    }
 }
 
-//Gravando o arquivo de configuração no CONFIG da aplicação
-file_put_contents($configPath.$file, 
-	file_get_contents(__DIR__.'/config.php'));
+//Copiando o arquivo de configuração para o CONFIG da aplicação
+copy(__DIR__.'/Config', $configPath.$file);
 
 //Return to application installer
 return "\n--- $name instaled!";
