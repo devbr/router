@@ -127,10 +127,7 @@ class Router
         if ($url !== null) {
             define('_URL', $url);
         }
-        //Load configurations
-        if (method_exists('Config\Router', 'routers')) {
-            (new \Config\Router)->routers($this);
-        }
+        
         $this->method = $this->requestMethod();
         $this->mount();
     }
@@ -162,6 +159,12 @@ class Router
      */
     function run()
     {
+        //Load configurations
+        if (class_exists('\Config\Router\Router')) {
+            new \Config\Router\Router;
+        }
+
+        //Resolve request
         $this->resolve();
         
         //If is a CALLBACK...
