@@ -13,8 +13,8 @@ if (is_file($configPath.$file)) {
     return "\n--- $name configuration file already exists!";
 }
 if (!is_dir($configPath)) {
-    @mkdir($configPath, '0777', true);
-    @chmod($configPath, $perm);
+    @mkdir($configPath, 0777, true);
+    @chmod($configPath, 0777);
     if (!is_writable($configPath)) {
         return "\n\n--- Configuration file for $name not instaled!\n\n";
     }
