@@ -30,7 +30,11 @@ class Router
     function __construct()
     {
         //Defaults routers
-        \Lib\Router::this()->respond('get', '/', 'Resource\Main::index');
+        \Lib\Router::this()->respond('get', '/', 'Resource\Main::index')
+                           ->respond('options|head', '.*', function () {
+                                        header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD');
+                                        exit();
+                                    });
         //Load others routes
         $this->loadRouterConfig();
     }
