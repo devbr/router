@@ -21,7 +21,8 @@ if (!is_dir($configPath)) {
 }
 
 //Copiando o arquivo de configuração para o CONFIG da aplicação
-copy(__DIR__.'/Config/Router/Router.php', $configPath.$file);
+//copy(__DIR__.'/Config/Router/Router.php', $configPath.$file);
+copy(__DIR__.'/Config/Router', $configPath);
 
 //Return to application installer
 return "\n--- $name instaled!";
