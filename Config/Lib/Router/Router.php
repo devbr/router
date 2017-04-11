@@ -13,7 +13,7 @@
  */
 
 
-namespace Config\Router;
+namespace Config\Lib\Router;
 
 /**
  * Config\Router Class
@@ -34,7 +34,7 @@ class Router
                            ->respond('options|head', '.*', function () {
                                         header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD');
                                         exit();
-                                    });
+                           });
         //Load others routes
         $this->loadRouterConfig();
     }
@@ -59,7 +59,7 @@ class Router
                 $this->loadRouterConfig($dir.'/'.$file);
             }
 
-            if ($dir.'/'.$file !== __DIR__.'/'.$file) {
+            if (str_replace('\\', '/', $dir.'/'.$file) !== str_replace('\\', '/', __FILE__)) {
                 include $dir.'/'.$file;
             }
         }
