@@ -1,28 +1,25 @@
 <?php
-if (php_sapi_name() !== 'cli') {
-    exit('It\'s no cli!');
+
+if (php_sapi_name() !== 'cli' || !defined('_CONFIG')) {
+    exit("\n\tI can not run out of system!\n");
 }
 
-//Configurations - you can change...
-$name = 'Router';
-$file = 'Router.php';
-$configPath = defined('_CONFIG') ? _CONFIG.'Router/' : dirname(dirname(dirname(__DIR__))).'/Config/Router/';
+$thisConfig = __DIR__.'/Config/';
 
-//Checkin
-if (is_file($configPath.$file)) {
-    return "\n--- $name configuration file already exists!";
-}
-if (!is_dir($configPath)) {
-    @mkdir($configPath, 0777, true);
-    @chmod($configPath, 0777);
-    if (!is_writable($configPath)) {
-        return "\n\n--- Configuration file for $name not instaled!\n\n";
-    }
+if (!is_dir($thisConfig)) {
+    return;
 }
 
-//Copiando o arquivo de configuração para o CONFIG da aplicação
-//copy(__DIR__.'/Config/Router/Router.php', $configPath.$file);
-copy(__DIR__.'/Config/Router', $configPath);
+$namespace = @json_decode(file_get_contents(__DIR__.'/composer.json'))->name;
+/* OPTIONAL
+ * load composer.json and get the "name" of pack 
+ * $appConfig = _CONFIG.$namespace;
+ */
+ 
+$appConfig = _CONFIG;
+
+//Coping all files (and directorys) in /Config
+$copy = \Lib\Cli\Main::copyDirectoryContents($thisConfig, $appConfig);
 
 //Return to application installer
-return "\n--- $name instaled!";
+return "\n---".($copy === true ? " $namespace instaled!" : $copy);

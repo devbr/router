@@ -160,8 +160,8 @@ class Router
     function run()
     {
         //Load configurations
-        if (class_exists('\Config\Router\Router')) {
-            new \Config\Router\Router;
+        if (class_exists('\Config\Lib\Router\Router')) {
+            new \Config\Lib\Router\Router;
         }
 
         //Resolve request
