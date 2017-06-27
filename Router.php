@@ -1,6 +1,6 @@
 <?php
 /**
- * Lib\Router
+ * Devbr\Router
  * PHP version 7
  *
  * @category  Access
@@ -11,7 +11,7 @@
  * @version   GIT: 0.0.1
  * @link      http://paulorocha.tk/devbr
  */
-namespace Lib;
+namespace Devbr;
 
 /**
  * Router Class
@@ -130,6 +130,10 @@ class Router
         
         $this->method = $this->requestMethod();
         $this->mount();
+
+        if (!is_object(static::$node)) {
+            static::$node = $this;
+        }
     }
     /**
      * Singleton instance
@@ -160,8 +164,8 @@ class Router
     function run()
     {
         //Load configurations
-        if (class_exists('\Config\Lib\Router\Router')) {
-            new \Config\Lib\Router\Router;
+        if (class_exists('\Config\Devbr\Router\Router')) {
+            new \Config\Devbr\Router\Router;
         }
 
         //Resolve request

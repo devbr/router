@@ -1,16 +1,16 @@
-# Access Manager - Router
+# Access Manager - Router2
 
 ## Install
 
 Use Composer for easy installation:
 
 ```php
-Composer require devbr/router 
+Composer require devbr/router2 
 ```
 
 Or install the full base for PHP websites, at "https://github.com/devbr/website".
 
-More info: https://packagist.org/packages/devbr/router
+More info: https://packagist.org/packages/devbr/router2
 
 ## Access Management
 
@@ -46,9 +46,9 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
             
     <controller>: Class (object) to manage the request.
                   Name must be a complete string, with NAMESPACE + CLASSNAME. 
-                        Ex.: "Lib\User".
+                        Ex.: "Devbr\User".
                   Alternatively you can use the following format: "controller::action". 
-                        Ex.: "Lib\User::login".
+                        Ex.: "Devbr\User::login".
                   The Controller can also be an anonymous function that receives (or not)
                   parameters of the regular expression in <request>.
                         Ex.: $router->respond('get', 

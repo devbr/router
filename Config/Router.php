@@ -13,7 +13,7 @@
  */
 
 
-namespace Config\Lib\Router;
+namespace Config\Devbr\Router;
 
 /**
  * Config\Router Class
@@ -30,7 +30,7 @@ class Router
     function __construct()
     {
         //Defaults routers
-        \Lib\Router::this()->respond('get', '/', 'Resource\Main::index')
+        \Devbr\Router::this()->respond('get', '/', 'Resource\Main::index')
                            ->respond('options|head', '.*', function () {
                                         header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD');
                                         exit();
@@ -77,8 +77,8 @@ class Router
             <request>:    String of the requested URI - ex.: "about/me" ==> http://site.com/about/me
             
             <controller>: Class (object) to manage the request. 
-                          Name must be a complete string, with NAMESPACE + CLASSNAME. Ex.: "Lib\User".
-                          Alternatively you can use the following format: "controller::action" - ex.: "Lib\User::login".                          
+                          Name must be a complete string, with NAMESPACE + CLASSNAME. Ex.: "Devbr\User".
+                          Alternatively you can use the following format: "controller::action" - ex.: "Devbr\User::login".                          
                           The Controller can also be an anonymous function that receives (or not) 
                           parameters of the regular expression in <request>. 
                           Ex.: $router->respond('get', '/(*)', function($path){exit($path);});
