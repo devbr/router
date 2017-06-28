@@ -114,6 +114,6 @@ function copyDirectoryContents($dir, $target)
  */
 function ret($msg)
 {
-    echo "\n - $msg\n\n";
+    echo "\n - $msg";
     return true;
 }
