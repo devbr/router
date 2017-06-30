@@ -1,6 +1,6 @@
 <?php
 /**
- * Config\Router
+ * Config\Routes
  * PHP version 7
  *
  * @category  Access
@@ -13,10 +13,10 @@
  */
 
 
-namespace Config\Devbr\Router;
+namespace Config\Routes;
 
 /**
- * Config\Router Class
+ * Config\Routes\Main Class
  *
  * @category Access
  * @package  Config
@@ -24,7 +24,7 @@ namespace Config\Devbr\Router;
  * @license  <https://opensource.org/licenses/MIT> MIT
  * @link     http://paulorocha.tk/devbr
  */
-class Router
+class Main
 {
 
     function __construct()
