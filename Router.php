@@ -164,8 +164,8 @@ class Router
     function run()
     {
         //Load configurations
-        if (class_exists('\Config\Devbr\Router\Router')) {
-            new \Config\Devbr\Router\Router;
+        if (class_exists('\Config\Routes\Main')) {
+            new \Config\Routes\Main;
         }
 
         //Resolve request
