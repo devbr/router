@@ -1,35 +1,41 @@
-# Access Manager - Router2
+# Access Manager - Router
+
+[![Latest Stable Version](https://poser.pugx.org/devbr/website/v/stable)](https://packagist.org/packages/devbr/router)
+[![Latest Unstable Version](https://poser.pugx.org/devbr/website/v/unstable)](https://packagist.org/packages/devbr/router)
+[![License](https://poser.pugx.org/devbr/website/license)](https://packagist.org/packages/devbr/router)
+[![Total Downloads](https://poser.pugx.org/devbr/website/downloads)](https://packagist.org/packages/devbr/router)
+[![Monthly Downloads](https://poser.pugx.org/devbr/website/d/monthly)](https://packagist.org/packages/devbr/router)
 
 ## Install
 
 Use Composer for easy installation:
 
 ```php
-Composer require devbr/router2 
+Composer require devbr/router 
 ```
 
 Or install the full base for PHP websites, at "https://github.com/devbr/website".
 
-More info: https://packagist.org/packages/devbr/router2
+More info: https://packagist.org/packages/devbr/router
 
 ## Access Management
 
 ```TODO: translate to english``` 
 
-Depois de instalado o arquivo de configuração (Config\Router), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
+Depois de instalado o arquivo de configuração (Config\Routes\Main), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
 
 ```php
 namespace Config;
 
-class Router 
+class Main 
 {
-    function routers(&$router)
+    function __construct()
     {
-        $router->respond('get', '/', 'Site\Front::page');
+        \Devbr\Router::this()->respond('get', '/', 'Site\Front::page');
     }
 }
 ```
-Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em ".php/Config/Router" (ou na pasta vendor/devbr/router/config.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
+Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em "/Config/Routes/Main.php" (ou na pasta vendor/devbr/router/Config/Routes/Main.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
 
 A função "respond", responsável por adicionar as rotas de resposta conforme a solicitação de acesso, tem a seguinte sintaxe:
 
@@ -76,6 +82,7 @@ Se você instalou o "https://github.com/devbr/website" já terá esta configura�
         "psr-4": {"": ".php/"}
     }
 ```
+<b><< a pasta pode ter outro nome, conforme sua escolha >></b>
 
 Em um servidor Linux, rodando Apache, o root deve estar no seguinte caminho:
 ```php
