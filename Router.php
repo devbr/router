@@ -9,7 +9,7 @@
  * @copyright 2016 Bill Rocha <http://google.com/+BillRocha>
  * @license   <https://opensource.org/licenses/MIT> MIT
  * @version   GIT: 0.0.1
- * @link      http://paulorocha.tk/devbr
+ * @link      http://dbrasil.tk/devbr
  */
 namespace Devbr;
 
@@ -20,7 +20,7 @@ namespace Devbr;
  * @package  Librarys
  * @author   Bill Rocha <prbr@ymail.com>
  * @license  <https://opensource.org/licenses/MIT> MIT
- * @link     http://paulorocha.tk/devbr
+ * @link     http://dbrasil.tk/devbr
  */
 class Router
 {
@@ -31,15 +31,22 @@ class Router
     private $routers = [];
     private $params = [];
     private $all = [];
-    private $method = 'GET';
+    private $method = 'GET'; //CLI, GET, POST, DELETE, PUT, PATCH, OPTIONS, HEAD
     private $separator = '::';
     private $controller = '';
     private $action = '';
-    private $defaultController = 'Resource\Main';
+
+    //WEB
+    private $defaultController = 'App';
     private $defaultAction = 'pageNotFound';
+    private $namespacePrefix = ''; //namespace prefix for MVC systems - ex.: '\Controller'
+
+    //CLI
+    private $defaultCliController = 'App';
+    private $defaultCliAction = 'cliHelp';
+    private $namespaceCliPrefix = 'Cli';
     
-    //namespace prefix for MVC systems - ex.: '\Controller'
-    private $namespacePrefix = '';
+    //Statics
     private static $node = null;
     private static $ctrl = null;
     
@@ -113,6 +120,25 @@ class Router
         $this->namespacePrefix = $v === '' ? '' : '\\'.trim( str_replace('/', '\\', $v), '\\/ ');
         return $this;
     }
+
+    //CLI
+    function setDefaultCliController($v)
+    {
+        $this->defaultCliController = trim( str_replace('/', '\\', $v), '\\/ ');
+        return $this;
+    }
+    
+    function setDefaultCliAction($v)
+    {
+        $this->defaultCliAction = trim($v, '\\/ ');
+        return $this;
+    }
+    
+    function setNamespaceCliPrefix($v)
+    {
+        $this->namespaceCliPrefix = $v === '' ? '' : '\\'.trim( str_replace('/', '\\', $v), '\\/ ');
+        return $this;
+    }
     
     /**
      * Constructor
@@ -131,6 +157,7 @@ class Router
         $this->method = $this->requestMethod();
         $this->mount();
 
+        //Saving this object in static node (for future static access)
         if (!is_object(static::$node)) {
             static::$node = $this;
         }
@@ -139,7 +166,7 @@ class Router
      * Singleton instance
      *
      */
-    static function this()
+    public static function this()
     {
         if (is_object(static::$node)) {
             return static::$node;
@@ -152,9 +179,19 @@ class Router
     /**
      *  Get Controller Object
      */
-    static function getCtrl()
+    public static function getCtrl()
     {
         return static::$ctrl;
+    }
+
+
+    function loadConfig()
+    {
+        if (class_exists('\Config\Routes\Main')) {
+            new \Config\Routes\Main($this);
+        }
+
+        return $this;
     }
     
     /**
@@ -164,9 +201,7 @@ class Router
     function run()
     {
         //Load configurations
-        if (class_exists('\Config\Routes\Main')) {
-            new \Config\Routes\Main;
-        }
+        $this->loadConfig();
 
         //Resolve request
         $this->resolve();
@@ -176,18 +211,15 @@ class Router
             exit(call_user_func_array($this->controller, [$this->request, $this->params]));
         }
         if ($this->controller === null) {
-            $this->controller = $this->defaultController;
+            $this->controller = $this->method == 'CLI' ? $this->defaultCliController : $this->defaultController;
         }
         if ($this->action === null) {
-            $this->action = $this->defaultAction;
+            $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
         }
 
         //Name format to Controller namespace
-        $tmp = explode('\\', str_replace('/', '\\', $this->controller));
-        $ctrl = $this->namespacePrefix;
-        foreach ($tmp as $tmp1) {
-            $ctrl .= '\\'.ucfirst($tmp1);
-        }
+        $ctrl = $this->formatePrsr4Name($this->controller, $this->method == 'CLI' ? $this->namespaceCliPrefix : $this->namespacePrefix);
+        
         //save controller param
         $this->controller = $ctrl;
         
@@ -195,12 +227,16 @@ class Router
         if (class_exists($ctrl)) {
             static::$ctrl = new $ctrl(['params' => $this->params, 'request' => $this->request]);
         } else {
+            if ($this->method == 'CLI') {
+                exit('<pre>'.print_r($this, true));
+                exit("\n\t> Action not found\n\n");
+            }
             header("HTTP/1.0 404 Not Found");
             exit('Page not Found!');
         }
-
+        
         if (!method_exists(static::$ctrl, $this->action)) {
-            $this->action = $this->defaultAction;
+            $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
         }
 
         return call_user_func_array([static::$ctrl, $this->action],
@@ -213,11 +249,15 @@ class Router
      */
     function resolve()
     {
+        if ($this->method == 'CLI') {
+            $route = $this->searchCliRoute();
+        } else {
         //first: serach in ALL
-        $route = $this->searchRouter($this->all);
+            $route = $this->searchRouter($this->all);
         //now: search for access method
-        if ($route === false && isset($this->routers[$this->method])) {
-            $route = $this->searchRouter($this->routers[$this->method]);
+            if ($route === false && isset($this->routers[$this->method])) {
+                $route = $this->searchRouter($this->routers[$this->method]);
+            }
         }
         //not match...
         if ($route === false) {
@@ -262,6 +302,17 @@ class Router
      */
     private function mount()
     {
+        if ($this->method === 'CLI') {
+            global $argv;
+
+            if (isset($argv[0]) && $argv[0] == 'index.php') {
+                array_shift($argv);
+            }
+
+            $this->request = $argv;
+
+            return;
+        }
         //Detect SSL access
         if (!isset($_SERVER['SERVER_PORT'])) {
             $_SERVER['SERVER_PORT'] = 80;
@@ -280,6 +331,58 @@ class Router
         $this->base = $base;
         $this->http = $http;
     }
+
+
+    /**
+     * [formatePrsr4Name description]
+     *
+     * @param  [type] $name   [description]
+     * @param  string $prefix [description]
+     *
+     * @return [type]         [description]
+     */
+    private function formatePrsr4Name($name, $prefix = '')
+    {
+        $tmp = explode('\\', str_replace('/', '\\', $name));
+        $name = $prefix;
+        foreach ($tmp as $tmp1) {
+            $name .= '\\'.ucfirst($tmp1);
+        }
+
+        return $name;
+    }
+
+    /**
+     * [searchCliRoute description]
+     *
+     * @return [type] [description]
+     */
+    private function searchCliRoute()
+    {
+        $request = $this->request;
+        $this->request = implode(' ', $this->request);
+    
+        $route = ['request'=>$request, 'controller'=>false, 'action'=>null, 'params'=>null];
+
+        if (isset($request[0])) {
+            $tmp = explode($this->separator, $request[0]);
+            if (isset($tmp[0])) {
+                $route['controller'] = $tmp[0];
+            }
+            if (isset($tmp[1])) {
+                $route['action'] = $tmp[1];
+            }
+            array_shift($request);
+
+            if (count($request) > 0) {
+                $route['params'] = $request;
+            }
+        }
+
+        return $route;
+    }
+
+
     /**
      * Search for valide router
      *
@@ -289,10 +392,10 @@ class Router
     {
         foreach ($routes as $route) {
             if ($route['controller'] === null
-                  || !preg_match_all('#^' . $route['request'] . '$#',
-                        $this->request,
-                        $matches,
-                        PREG_SET_ORDER)
+              || !preg_match_all('#^' . $route['request'] . '$#',
+                    $this->request,
+                    $matches,
+                    PREG_SET_ORDER)
                   ) {
                 continue;
             }
@@ -327,6 +430,9 @@ class Router
      */
     private function requestMethod()
     {
+        if (php_sapi_name() === 'cli') {
+            return 'CLI';
+        }
         // Take the method as found in $_SERVER
         $method = $_SERVER['REQUEST_METHOD'];
         if ($_SERVER['REQUEST_METHOD'] == 'HEAD') {

@@ -26,15 +26,21 @@ namespace Config\Routes;
  */
 class Main
 {
+    private $router = null;
 
-    function __construct()
+    function __construct($router)
     {
+        //recording router instance
+        $this->router = $router;
+
         //Defaults routers
-        \Devbr\Router::this()->respond('get', '/', 'Resource\Main::index')
-                           ->respond('options|head', '.*', function () {
-                                        header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD');
-                                        exit();
-                           });
+        $router->respond('get', '/', 'App::welcomePage')
+               ->respond('options|head', '.*',
+                    function () {
+                        header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD');
+                        exit();
+                    });
+        
         //Load others routes
         $this->loadRouterConfig();
     }
@@ -49,6 +55,7 @@ class Main
         if ($dir === null) {
             $dir = __DIR__;
         }
+        $router = $this->router;
 
         foreach (scandir($dir) as $file) {
             if ($file == '.' || $file == '..') {
