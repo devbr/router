@@ -10,7 +10,7 @@
         "email": "prbr@ymail.com"
     }],
     "require": {
-        "php": ">=5.6.28"
+        "php": ">=5.6"
     },
     "autoload": {
         "psr-4": {
