@@ -199,10 +199,7 @@ class Router
      *
      */
     function run()
-    {
-        //Load configurations
-        $this->loadConfig();
-
+    {  
         //Resolve request
         $this->resolve();
         
@@ -330,6 +327,9 @@ class Router
         $this->url = _URL;
         $this->base = $base;
         $this->http = $http;
+        
+        //Load configurations
+        $this->loadConfig();
     }
 
 
