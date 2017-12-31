@@ -187,8 +187,8 @@ class Router
 
     function loadConfig()
     {
-        if (class_exists('\Config\Routes\Main')) {
-            new \Config\Routes\Main($this);
+        if (class_exists('\Config\Devbr\Router')) {
+            new \Config\Devbr\Router($this);
         }
 
         return $this;
@@ -234,6 +234,10 @@ class Router
         
         if (!method_exists(static::$ctrl, $this->action)) {
             $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
+            if(!method_exists(static::$ctrl, $this->action)){
+                header("HTTP/1.0 404 Not Found");
+                exit('Page not Found!');
+            }
         }
 
         return call_user_func_array([static::$ctrl, $this->action],
