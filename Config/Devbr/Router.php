@@ -1,6 +1,6 @@
 <?php
 /**
- * Config\Routes
+ * Config\Devbr\Routes
  * PHP version 7
  *
  * @category  Access
@@ -13,10 +13,10 @@
  */
 
 
-namespace Config\Routes;
+namespace Config\Devbr;
 
 /**
- * Config\Routes\Main Class
+ * Config\Devbr\Router Class
  *
  * @category Access
  * @package  Config
@@ -24,15 +24,10 @@ namespace Config\Routes;
  * @license  <https://opensource.org/licenses/MIT> MIT
  * @link     http://dbrasil.tk/devbr
  */
-class Main
+class Router
 {
-    private $router = null;
-
     function __construct($router)
     {
-        //recording router instance
-        $this->router = $router;
-
         //Defaults routers
         $router->respond('get', '/', 'App::welcomePage')
                ->respond('options|head', '.*',
@@ -42,34 +37,7 @@ class Main
                     });
         
         //Load others routes
-        $this->loadRouterConfig();
-    }
-
-    /**
-     * Resursive load files
-     * @param  string $dir Path of subdirectory
-     * @return void void
-     */
-    private function loadRouterConfig($dir = null)
-    {
-        if ($dir === null) {
-            $dir = __DIR__;
-        }
-        $router = $this->router;
-
-        foreach (scandir($dir) as $file) {
-            if ($file == '.' || $file == '..') {
-                continue;
-            }
-
-            if (is_dir($dir.'/'.$file)) {
-                $this->loadRouterConfig($dir.'/'.$file);
-            }
-
-            if (str_replace('\\', '/', $dir.'/'.$file) !== str_replace('\\', '/', __FILE__)) {
-                include $dir.'/'.$file;
-            }
-        }
+        require_once __DIR__.'/staticPages.php';
     }
 }
 
