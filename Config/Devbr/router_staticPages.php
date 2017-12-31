@@ -1,7 +1,7 @@
 <?php
 
 $router->respond('get', 'about', function () {
-    $htmlpage = __DIR__.'/../Html/Static/about.html';
+    $htmlpage = __DIR__.'/Html/Static/about.html';
 
     if (file_exists($htmlpage)) {
         include $htmlpage;
