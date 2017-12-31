@@ -37,7 +37,7 @@ class Router
                     });
         
         //Load others routes
-        require_once __DIR__.'/router_staticPages.php';
+        require_once __DIR__.'/router.staticPages.php';
     }
 }
 
