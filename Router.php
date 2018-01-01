@@ -42,9 +42,9 @@ class Router
     private $namespacePrefix = ''; //namespace prefix for MVC systems - ex.: '\Controller'
 
     //CLI
-    private $defaultCliController = 'App';
+    private $defaultCliController = 'Main';
     private $defaultCliAction = 'cliHelp';
-    private $namespaceCliPrefix = 'Cli';
+    private $namespaceCliPrefix = 'Devbr\Cli';
     
     //Statics
     private static $node = null;
@@ -201,7 +201,7 @@ class Router
     function run()
     {  
         //Resolve request
-        $this->resolve();
+        $this->resolve();  
         
         //If is a CALLBACK...
         if (is_object($this->controller)) {
@@ -219,18 +219,15 @@ class Router
         
         //save controller param
         $this->controller = $ctrl;
-        
+
         //instantiate the controller
         if (class_exists($ctrl)) {
-            static::$ctrl = new $ctrl(['params' => $this->params, 'request' => $this->request]);
+            static::$ctrl = new $ctrl($this->params, $this->request);
+            //IN CLI mode finish in this point: Cli\Main::__construct return to CMD.
         } else {
-            if ($this->method == 'CLI') {
-                exit('<pre>'.print_r($this, true));
-                exit("\n\t> Action not found\n\n");
-            }
             header("HTTP/1.0 404 Not Found");
             exit('Page not Found!');
-        }
+        } 
         
         if (!method_exists(static::$ctrl, $this->action)) {
             $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
