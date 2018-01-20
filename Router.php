@@ -158,7 +158,7 @@ class Router
         }
         
         if ($url !== null) {
-            $this->url);
+            $this->url;
         }
         
         $this->method = $this->requestMethod();
@@ -229,7 +229,7 @@ class Router
         
         //Check whether to automatically run the Controller 
         //      or return this object
-        if(!$this->autoRun) {
+        if(!$this->autorun) {
             return $this;            
         }
         
