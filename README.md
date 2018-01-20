@@ -165,17 +165,17 @@ echo '<pre>'.print_r($router, true).'</pre>';
 
 ## Modo CLI (command line)
 
-O Router também pode ser configurado para tratar acesso em linha de comando (terminal). Para esse caso, o method "CLI" pode ser configurado da mesma forma que um método HTTP (GET, POST...) nas configurações, usando a função "respond".
+O Router também pode ser configurado para tratar acesso em linha de comando (terminal). Para esse caso, o method "CLI" é automáticamente detectado.
 
 O namespace default é "Devbr\Cli" e pode (deve) ser configurado conforme as necessidades de sua aplicação. Este namespace está ai para funcionar em conjunto com o componente https://github.com/devbr/tools e obter algumas funcionalidades de apoio ao desenvolvedor.
 
-Instalado o Devbr\Tools, você pode digitar no terminal:
+Com o Devbr\Tools instalado, você pode digitar no terminal:
 
 ```shell
 php index.php Main
 ```
 
-Onde "Main" é a classe principal desse pacote e, no caso acima, irá obter um "help" das funções disponíveis.
+Onde "Main" é a classe principal desse pacote e, no caso acima, irá obter um "help" das funções disponíveis. Ou ``` Controller not found! ``` caso o Devbr\Tools não esteja instalado.
 
 Para criar seus próprios objetos para acesso via linha de commando, precisará indicar ao Router o *namespace* de suas classes para o CLI, na configuração do Router:
 
@@ -187,16 +187,16 @@ class Router
     function __construct($router)
     {
         $router->setNamespaceCliPrefix('Cli');
-        
-        ... //demais configurações
+        $router-> ... //demais configurações
 ```
 
-Nesse exemplo acima, "Cli" é o diretório raíz para as suas classes. considere o seguinte caminho (estou confiando que ".php" é o fallback principal, conforme visto anteriormente):
+Nesse exemplo acima, "Cli" é o diretório raíz para as suas classes (a partir do fallback). 
+Considere o seguinte caminho para a sua classe "Tests" *(estou confiando que ".php" é o fallback principal, previamente configurado no **composer.json**, conforme visto anteriormente)*:
 
 ```shell
 /var/www/.php/Cli/Tests.php
 ```
 
-Abrindo um terminal e digitando ``` php index.php Tests ```, o Router vai rodar sua classe Cli\Tests, cujo arquivo está no caminho "/var/www/.php/Cli/Tests.php".
+Abrindo um terminal e digitando ``` php index.php Tests::action par1 par2 ```, o Router vai montar a classe **Cli\Tests**, chamar o método "action", passando "par1, par2" como parâmetros.
 
-Agora, basta configurar corretamente a rota no **Config\Devbr\Router**, indicando como método (primeiro parâmetro da função "respond") a string "cli".
+Caso você digite ``` php index.php Tests ``` (sem o action) o Router chamará a função **cliHelp** (default), se existir. Você deve criar esse método em suas classes CLI para exibir algum texto de ajuda, para o usuário.
