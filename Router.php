@@ -24,6 +24,7 @@ namespace Devbr;
  */
 class Router
 {
+    private $autorun = true;
     private $url = '';
     private $http = '';
     private $base = '';
@@ -144,14 +145,20 @@ class Router
      * Constructor
      */
     function __construct(
+        $autorun = true,
         $request = null,
         $url = null
     ) {
-        if ($request !== null) {
-            define('_RQST', $request);
+        if ($autorun === false){
+            $this->autorun = false;
         }
+        
+        if ($request !== null) {
+            $this->request;
+        }
+        
         if ($url !== null) {
-            define('_URL', $url);
+            $this->url);
         }
         
         $this->method = $this->requestMethod();
@@ -217,10 +224,16 @@ class Router
         //Name format to Controller namespace
         $ctrl = $this->formatePrsr4Name($this->controller, $this->method == 'CLI' ? $this->namespaceCliPrefix : $this->namespacePrefix);
         
-        //save controller param
+        //Save the controller...
         $this->controller = $ctrl;
-
-        //instantiate the controller
+        
+        //Check whether to automatically run the Controller 
+        //      or return this object
+        if(!$this->autoRun) {
+            return $this;            
+        }
+        
+        //Instantiate the controller
         if (class_exists($ctrl)) {
             static::$ctrl = new $ctrl($this->params, $this->request);
             //IN CLI mode finish in this point: Cli\Main::__construct return to CMD.
@@ -315,19 +328,23 @@ class Router
         if (!isset($_SERVER['SERVER_PORT'])) {
             $_SERVER['SERVER_PORT'] = 80;
         }
-        $http = (isset($_SERVER['HTTPS']) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1 || $_SERVER['SERVER_PORT'] == 443)) ? 'https://' : 'http://';
+        $this->http = (isset($_SERVER['HTTPS']) && ($_SERVER["HTTPS"] == "on" || $_SERVER["HTTPS"] == 1 || $_SERVER['SERVER_PORT'] == 443)) ? 'https://' : 'http://';
         //What's base??!
-        $base = isset($_SERVER['PHAR_SCRIPT_NAME']) ? dirname($_SERVER['PHAR_SCRIPT_NAME']) : rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), ' /');
+        $this->base = isset($_SERVER['PHAR_SCRIPT_NAME']) ? dirname($_SERVER['PHAR_SCRIPT_NAME']) : rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), ' /');
         if ($_SERVER['SERVER_PORT'] != 80  && $_SERVER['SERVER_PORT'] != 443) {
-            $base .= ':' . $_SERVER['SERVER_PORT'];
+            $this->base .= ':' . $_SERVER['SERVER_PORT'];
         }
+        
         //URL & REQST Constants:
-        defined('_RQST') || define('_RQST', urldecode(isset($_SERVER['REQUEST_URI']) ? urldecode(trim(str_replace($base, '', trim($_SERVER['REQUEST_URI'])), ' /')) : ''));
-        defined('_URL') || define('_URL', isset($_SERVER['SERVER_NAME']) ? $http . $_SERVER['SERVER_NAME'] . $base . '/' : '');
-        $this->request = _RQST;
-        $this->url = _URL;
-        $this->base = $base;
-        $this->http = $http;
+        if(!$this->request) {
+            $this->request = urldecode(isset($_SERVER['REQUEST_URI']) ? urldecode(trim(str_replace($this->base, '', trim($_SERVER['REQUEST_URI'])), ' /')) : '');
+        }
+        defined('_RQST') || define('_RQST', $this->request);
+
+        if($this->url) {
+            $this->url = isset($_SERVER['SERVER_NAME']) ? $this->http . $_SERVER['SERVER_NAME'] . $this->base . '/' : '';
+        }
+        defined('_URL') || define('_URL', $this->request);
         
         //Load configurations
         $this->loadConfig();
