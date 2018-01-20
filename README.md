@@ -22,20 +22,20 @@ More info: https://packagist.org/packages/devbr/router
 
 ```TODO: translate to english``` 
 
-Depois de instalado o arquivo de configuração (Config\Routes\Main), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
+Depois de instalado o arquivo de configuração (Config\Devbr\Router), é possível indicar as regras de resposta a solicitações de acesso ao site ou aplicação.
 
 ```php
-namespace Config;
+namespace Config\Devbr;
 
-class Main 
+class Router
 {
-    function __construct()
+    function __construct($router)
     {
-        \Devbr\Router::this()->respond('get', '/', 'Site\Front::page');
+        $router->respond('get', '/', 'Site\Front::page');
     }
 }
 ```
-Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em "/Config/Routes/Main.php" (ou na pasta vendor/devbr/router/Config/Routes/Main.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
+Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em "/Config/Devbr/Router.php" (ou na pasta [vendor]/devbr/router/Config/Devbr/Router.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
 
 A função "respond", responsável por adicionar as rotas de resposta conforme a solicitação de acesso, tem a seguinte sintaxe:
 
@@ -84,7 +84,7 @@ Se você instalou o "https://github.com/devbr/website" já terá esta configura�
 ```
 <b><< a pasta pode ter outro nome, conforme sua escolha >></b>
 
-Em um servidor Linux, rodando Apache, o root deve estar no seguinte caminho:
+Em um servidor Linux, rodando Apache, o root pode estar no seguinte caminho:
 ```php
 /var/www/site/.php/
 
@@ -101,7 +101,7 @@ Vamos considerar (para exemplo) que a sua classe está no seguinte caminho:
 Para montar esse objeto use:
 
 ```php
-$page = new Site\Front\Page();
+$page = new Site\Front\Page;
 ```
 
 Ou você pode usar a declaração "use", para ficar mais elegante:
