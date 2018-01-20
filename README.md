@@ -197,6 +197,6 @@ Considere o seguinte caminho para a sua classe "Tests" *(estou confiando que ".p
 /var/www/.php/Cli/Tests.php
 ```
 
-Abrindo um terminal e digitando ``` php index.php Tests::action par1 par2 ```, o Router vai montar a classe **Cli\Tests**, chamar o método "action", passando "par1, par2" como parâmetros.
+Abrindo um terminal e digitando ``` php index.php Tests::action par1 par2 ```, o Router vai montar a classe **Cli\Tests**, chamar o método **action**, passando **par1 e par2** como parâmetros.
 
-Caso você digite ``` php index.php Tests ``` (sem o action) o Router chamará a função **cliHelp** (default), se existir. Você deve criar esse método em suas classes CLI para exibir algum texto de ajuda, para o usuário.
+Caso você digite ``` php index.php Tests ``` (sem o action) o Router chamará o método **cliHelp** (default), se existir. Você deve criar esse método em suas classes CLI para exibir algum texto de ajuda, para o usuário.
