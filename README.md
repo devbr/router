@@ -37,6 +37,17 @@ class Router
 ```
 Este é o arquivo básico que acompanha a instalação do Router, podendo ser encontrado em "/Config/Devbr/Router.php" (ou na pasta [vendor]/devbr/router/Config/Devbr/Router.php). É neste arquivo que fazemos a configuração de acesso de nossa aplicação ou site.
 
+Para facilitar o acesso as configurações, sugiro mover a pasta "Config" para o "root" de sua aplicação PHP e acrescentar o seguinte em seu arquivo **composer.json**:
+
+```json
+...
+    "autoload": {
+        "Config\\": {"": ".php/Config/"}
+    }
+...
+```
+<b><< supondo que ".php/" seja seu fallback (ou raiz) para os arquivos PHP >></b>
+
 A função "respond", responsável por adicionar as rotas de resposta conforme a solicitação de acesso, tem a seguinte sintaxe:
 
 ```shell
@@ -73,14 +84,16 @@ $router->respond( <type>, <request>, <controller>, [<action>]);
 
 ```TODO: translate to english```
 
-O NAMESPACE tem seu "root" na pasta do PHP em seu site ou aplicação ("/.php").
+O NAMESPACE tem seu "root" (fallback) na pasta do PHP em seu site ou aplicação.
 
 Se você instalou o "https://github.com/devbr/website" já terá esta configuração, caso não, acrescente isto em seu composer.json:
 
-```shell
-"autoload": {
+```json
+...
+    "autoload": {
         "psr-4": {"": ".php/"}
-    }
+     }
+...    
 ```
 <b><< a pasta pode ter outro nome, conforme sua escolha >></b>
 
@@ -115,3 +128,36 @@ use Site\Front\Page;
 $page = new Page;
 ```
 
+## Usando o ROUTER
+
+No front controller da sua aplicação web (geralmente o arquivo index.php), você pode ter o seguinte:
+
+```php
+<?php
+
+//Carregando o autoloader do Composer
+include '[vendor]/autoload.php';
+
+//Montando e rodando o Router
+(new Devbr\Router)->run();
+```
+
+A pasta "vendor" do Composer pode estar, por exemplo, na sua pasta raiz dos arquivos PHP (ex.: ".php/").
+O Router, baseado nas configuração (Config\Devbr\Router), vai identificar as requisições e chamar o Controller (e action), passando os parâmetros, conforme a configuração do Router.
+
+Você pode querer que o Router apenas identifique as requisições, retoirnando os dados para que você use algum "midware", antes de chamar o controlador. Para isso, basta desativar o "autorun" do Router, na montagem do objeto:
+
+```php
+<?php
+
+//Carregando o autoloader do Composer
+include '[vendor]/autoload.php';
+
+//Montando e rodando o Router
+$router = (new Devbr\Router(false))->run();
+
+//For example, only --¬
+echo "\n Controller: ".$router->getController();
+
+print_r($router);
+```
