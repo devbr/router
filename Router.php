@@ -9,7 +9,7 @@
  * @copyright 2016 Bill Rocha <http://google.com/+BillRocha>
  * @license   <https://opensource.org/licenses/MIT> MIT
  * @version   GIT: 0.0.1
- * @link      http://dbrasil.tk/devbr
+ * @link      https://github.com/devbr
  */
 namespace Devbr;
 
@@ -20,15 +20,15 @@ namespace Devbr;
  * @package  Librarys
  * @author   Bill Rocha <prbr@ymail.com>
  * @license  <https://opensource.org/licenses/MIT> MIT
- * @link     http://dbrasil.tk/devbr
+ * @link     https://github.com/devbr
  */
 class Router
 {
     private $autorun = true;
-    private $url = '';
+    private $url = false;
     private $http = '';
     private $base = '';
-    private $request = '';
+    private $request = false;
     private $routers = [];
     private $params = [];
     private $all = [];
@@ -154,11 +154,11 @@ class Router
         }
         
         if ($request !== null) {
-            $this->request;
+            $this->request = $request;
         }
         
         if ($url !== null) {
-            $this->url;
+            $this->url = $url;
         }
         
         $this->method = $this->requestMethod();
@@ -344,15 +344,15 @@ class Router
         }
         
         //URL & REQST Constants:
-        if(!$this->request) {
+        if($this->request === false) {
             $this->request = urldecode(isset($_SERVER['REQUEST_URI']) ? urldecode(trim(str_replace($this->base, '', trim($_SERVER['REQUEST_URI'])), ' /')) : '');
         }
         defined('_RQST') || define('_RQST', $this->request);
 
-        if($this->url) {
+        if($this->url === false) {
             $this->url = isset($_SERVER['SERVER_NAME']) ? $this->http . $_SERVER['SERVER_NAME'] . $this->base . '/' : '';
         }
-        defined('_URL') || define('_URL', $this->request);
+        defined('_URL') || define('_URL', $this->url);
         
         //Load configurations
         $this->loadConfig();
