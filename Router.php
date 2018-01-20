@@ -238,18 +238,26 @@ class Router
             static::$ctrl = new $ctrl($this->params, $this->request);
             //IN CLI mode finish in this point: Cli\Main::__construct return to CMD.
         } else {
-            header("HTTP/1.0 404 Not Found");
-            exit('Page not Found!');
-        } 
-        
-        if (!method_exists(static::$ctrl, $this->action)) {
-            $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
-            if(!method_exists(static::$ctrl, $this->action)){
+            if($this->method != 'CLI') {
                 header("HTTP/1.0 404 Not Found");
                 exit('Page not Found!');
             }
+            exit("\nController not found!");            
+        } 
+        
+        //Seeking for the METHOD...
+        if (!method_exists(static::$ctrl, $this->action)) {
+            $this->action = $this->method == 'CLI' ? $this->defaultCliAction : $this->defaultAction;
+            if(!method_exists(static::$ctrl, $this->action)){
+                if($this->method != 'CLI') {
+                    header("HTTP/1.0 404 Not Found");
+                    exit('Page not Found!');
+                }
+                exit();      
+            }
         }
-
+        
+        //Call action
         return call_user_func_array([static::$ctrl, $this->action],
                                     [$this->request, $this->params]);
     }
