@@ -143,9 +143,9 @@ include '[vendor]/autoload.php';
 ```
 
 A pasta "vendor" do Composer pode estar, por exemplo, na sua pasta raiz dos arquivos PHP (ex.: ".php/").
-O Router, baseado nas configuração (Config\Devbr\Router), vai identificar as requisições e chamar o Controller (e action), passando os parâmetros, conforme a configuração do Router.
+O Router, baseado nas configuração (Config\Devbr\Router), vai identificar as requisições e chamar o Controller (e action), passando os parâmetros, seguindo a configuração que você definiu para a rota.
 
-Você pode querer que o Router apenas identifique as requisições, retoirnando os dados para que você use algum "midware", antes de chamar o controlador. Para isso, basta desativar o "autorun" do Router, na montagem do objeto:
+Você pode querer que o Router apenas identifique as requisições, retornando os dados para que você use algum "midware", antes de chamar o controlador. Para isso, basta desativar o "autorun" do Router, na montagem do objeto:
 
 ```php
 <?php
@@ -157,7 +157,8 @@ include '[vendor]/autoload.php';
 $router = (new Devbr\Router(false))->run();
 
 //For example, only --¬
-echo "\n Controller: ".$router->getController();
+echo '<b>Controller:</b> '.$router->getController();
 
-print_r($router);
+//Or ...
+echo '<pre>'.print_r($router, true).'</pre>';
 ```
